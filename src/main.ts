@@ -3,6 +3,7 @@ import { styles as typescaleStyles } from "@material/web/typography/md-typescale
 
 import "./styles.css";
 
+import { attachHoldConfirm } from "./confirmHold";
 import {
 	closeImport,
 	openImport,
@@ -21,6 +22,7 @@ import {
 	goNext,
 	goPrev,
 	hydrateGame,
+	refreshEmptyState,
 	shuffleUnsolved,
 	startRound,
 	updateRoundInfo,
@@ -32,7 +34,15 @@ import {
 	openAiDialog,
 	unlockSavedKey,
 } from "./mistral";
-import { loadGame } from "./persist";
+import { loadLastGame } from "./persist";
+import {
+	clearCurrentSet,
+	handleEmptySetChipClick,
+	handleSetsListClick,
+	initialSetsCardState,
+	openSetsDialog,
+	startNewSet,
+} from "./sets";
 import { state } from "./state";
 
 if (typescaleStyles.styleSheet) {
@@ -64,6 +74,54 @@ document.querySelectorAll("md-dialog").forEach((dialog) => {
 els.btnOpenImport.addEventListener("click", (e) => {
 	e.preventDefault();
 	openImport();
+});
+els.emptyImportCard.addEventListener("click", (e) => {
+	e.preventDefault();
+	openImport();
+});
+els.emptyAiCard.addEventListener("click", (e) => {
+	e.preventDefault();
+	openAiDialog();
+});
+els.btnSets.addEventListener("click", (e) => {
+	e.preventDefault();
+	openSetsDialog();
+});
+els.btnNewSet.addEventListener("click", (e) => {
+	e.preventDefault();
+	startNewSet();
+});
+els.btnCloseSets.addEventListener("click", (e) => {
+	e.preventDefault();
+	els.setsDialog.open = false;
+});
+els.emptySetsList.addEventListener("click", (e) => {
+	const target = e.target as HTMLElement;
+	const chip = target.closest<HTMLElement>(".emptySetChip");
+	if (chip?.dataset.setId) handleEmptySetChipClick(chip.dataset.setId);
+});
+els.setsList.addEventListener("click", (e) => {
+	handleSetsListClick(e.target as HTMLElement);
+});
+
+const clearLabel = els.btnClear.querySelector<HTMLElement>(".clearLabel");
+const clearFill = els.btnClear.querySelector<HTMLElement>(".clearFill");
+attachHoldConfirm(els.btnClear, 3000, {
+	onChange: (holding, fraction) => {
+		if (clearFill) clearFill.style.width = `${fraction * 100}%`;
+		if (clearLabel) {
+			clearLabel.textContent = holding
+				? fraction >= 1
+					? "Clearing…"
+					: "Keep holding…"
+				: "🗑 Clear";
+		}
+	},
+	onComplete: () => {
+		clearCurrentSet();
+		if (clearFill) clearFill.style.width = "";
+		if (clearLabel) clearLabel.textContent = "🗑 Clear";
+	},
 });
 els.btnCloseImport.addEventListener("click", (e) => {
 	e.preventDefault();
@@ -105,34 +163,35 @@ els.btnShuffle.addEventListener("click", (e) => {
 	shuffleUnsolved();
 });
 
-els.dropzone.addEventListener("click", (e) => {
-	e.preventDefault();
-	els.fileInput.click();
-});
-
-["dragenter", "dragover", "dragleave", "drop"].forEach((evtName) => {
-	els.dropzone.addEventListener(evtName, (ev) => {
-		ev.preventDefault();
-		ev.stopPropagation();
+function wireDropzone(zone: HTMLElement): void {
+	zone.addEventListener("click", (e) => {
+		e.preventDefault();
+		els.fileInput.click();
 	});
-});
 
-["dragenter", "dragover"].forEach((evtName) => {
-	els.dropzone.addEventListener(evtName, () =>
-		els.dropzone.classList.add("over"),
-	);
-});
+	["dragenter", "dragover", "dragleave", "drop"].forEach((evtName) => {
+		zone.addEventListener(evtName, (ev) => {
+			ev.preventDefault();
+			ev.stopPropagation();
+		});
+	});
 
-["dragleave", "drop"].forEach((evtName) => {
-	els.dropzone.addEventListener(evtName, () =>
-		els.dropzone.classList.remove("over"),
-	);
-});
+	["dragenter", "dragover"].forEach((evtName) => {
+		zone.addEventListener(evtName, () => zone.classList.add("over"));
+	});
 
-els.dropzone.addEventListener("drop", (ev) => {
-	const file = ev.dataTransfer?.files?.[0];
-	if (file) setImportedFile(file);
-});
+	["dragleave", "drop"].forEach((evtName) => {
+		zone.addEventListener(evtName, () => zone.classList.remove("over"));
+	});
+
+	zone.addEventListener("drop", (ev) => {
+		const file = ev.dataTransfer?.files?.[0];
+		if (file) setImportedFile(file);
+	});
+}
+
+wireDropzone(els.dropzone);
+wireDropzone(els.emptyDropzone);
 
 if (window.matchMedia("(max-width: 900px)").matches) {
 	els.rowsPerRound.value = "5";
@@ -174,9 +233,14 @@ els.btnRegenerateEditor.addEventListener("click", (e) => {
 	backFromEditor();
 });
 
-const saved = loadGame();
-if (saved) {
-	hydrateGame(saved);
+const loaded = loadLastGame();
+if (loaded) {
+	state.currentSetId = loaded.meta.id;
+	state.currentSetName = loaded.meta.name;
+	state.pendingNewSet = false;
+	hydrateGame(loaded.game);
 } else {
 	updateRoundInfo();
+	refreshEmptyState();
 }
+initialSetsCardState();

@@ -1,5 +1,5 @@
 import { els } from "./els";
-import { type PersistedGame, saveGame } from "./persist";
+import { type PersistedGame, saveCurrentGame } from "./persist";
 import { clampInt, escapeHtml, normalizeText, state } from "./state";
 import type { Card } from "./types";
 
@@ -9,6 +9,13 @@ export function resetBoardUI(): void {
 	state.cards.clear();
 	state.groups = [];
 	state.cardEls.clear();
+}
+
+export function refreshEmptyState(): void {
+	const hasData = state.dataRows.length > 0;
+	els.emptyState.hidden = hasData;
+	els.boardSection.hidden = !hasData;
+	els.colsBlock.hidden = !hasData;
 }
 
 export function updateRoundInfo(): void {
@@ -22,7 +29,7 @@ export function updateRoundInfo(): void {
 		? `Rows ${start + 1}-${end} of ${state.dataRows.length} (K=${state.k}, cols=${state.selectedCols.length})`
 		: "";
 
-	saveGame();
+	saveCurrentGame();
 }
 
 export function renderColumnsSelector(): void {
@@ -83,6 +90,7 @@ export function renderColumnsSelector(): void {
 
 export function startRound(): void {
 	updateRoundInfo();
+	refreshEmptyState();
 	resetBoardUI();
 
 	const start = state.roundIndex * state.k;
@@ -130,7 +138,7 @@ export function startRound(): void {
 	renderGroups();
 
 	els.btnShuffle.disabled = false;
-	saveGame();
+	saveCurrentGame();
 }
 
 function applyDuplicateMarkers(cardsArr: Card[]): void {
@@ -434,7 +442,7 @@ function recomputeAllGroupsUI(): void {
 	}
 
 	els.btnShuffle.disabled = !hasUnsolvedCards();
-	saveGame();
+	saveCurrentGame();
 }
 
 function hasUnsolvedCards(): boolean {
@@ -517,6 +525,7 @@ export function hydrateGame(p: PersistedGame): void {
 
 	renderColumnsSelector();
 	rebuildBoardFromState();
+	refreshEmptyState();
 }
 
 function rebuildBoardFromState(): void {

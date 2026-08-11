@@ -121,6 +121,231 @@ body {
 	color: var(--muted);
 }
 
+/* --- Empty state --- */
+.emptyState {
+	grid-column: 1 / -1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	padding: 48px 16px;
+	text-align: center;
+	background: rgba(21, 25, 35, 0.75);
+	border: 1px solid var(--border);
+	border-radius: 14px;
+	min-height: 60vh;
+	justify-content: center;
+}
+.emptyState[hidden] {
+	display: none;
+}
+.emptyStateTitle {
+	font-size: 22px;
+}
+.emptyStateHint {
+	max-width: 480px;
+	margin: 0;
+}
+.emptyStateGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 12px;
+	width: 100%;
+	max-width: 640px;
+	margin-top: 8px;
+}
+.emptyCard {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	padding: 24px 16px;
+	border: 1px dashed var(--border);
+	border-radius: 14px;
+	background: rgba(0, 0, 0, 0.18);
+	color: var(--text);
+	cursor: pointer;
+	font: inherit;
+	transition:
+		background 0.15s,
+		border-color 0.15s;
+}
+.emptyCard:hover {
+	background: rgba(122, 162, 255, 0.1);
+	border-color: var(--accent);
+}
+.emptyCardIcon {
+	font-size: 30px;
+}
+.emptyCardTitle {
+	font-size: 16px;
+	font-weight: 500;
+}
+.emptyCardHint {
+	font-size: 12px;
+}
+.emptyDropzone {
+	width: 100%;
+	max-width: 640px;
+	margin-top: 8px;
+	border: 1px dashed rgba(255, 255, 255, 0.25);
+	border-radius: 14px;
+	padding: 20px;
+	text-align: center;
+	color: var(--muted);
+	background: rgba(0, 0, 0, 0.18);
+	cursor: pointer;
+	font: inherit;
+}
+.emptyDropzone.over {
+	border-color: var(--accent);
+	color: var(--text);
+	box-shadow: 0 0 0 4px rgba(122, 162, 255, 0.15);
+}
+
+.emptySetsBlock {
+	width: 100%;
+	max-width: 640px;
+	margin-top: 8px;
+	text-align: center;
+}
+.emptySetsList {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	justify-content: center;
+	margin-top: 8px;
+}
+.emptySetChip {
+	background: rgba(122, 162, 255, 0.12);
+	border: 1px solid rgba(122, 162, 255, 0.3);
+	border-radius: 999px;
+	color: var(--text);
+	font-size: 13px;
+	padding: 7px 14px;
+	cursor: pointer;
+	transition:
+		background 0.15s,
+		border-color 0.15s;
+}
+.emptySetChip:hover {
+	background: rgba(122, 162, 255, 0.25);
+	border-color: var(--accent);
+}
+
+@media (max-width: 900px) {
+	.emptyState {
+		padding: 32px 10px;
+		min-height: 50vh;
+	}
+}
+
+/* --- Clear (hold-to-confirm) button --- */
+.clearBtn {
+	position: relative;
+	overflow: hidden;
+	border: 1px solid rgba(255, 77, 77, 0.5);
+	border-radius: 20px;
+	background: rgba(255, 77, 77, 0.1);
+	color: var(--text);
+	font-family: inherit;
+	font-size: 14px;
+	padding: 10px 16px;
+	cursor: pointer;
+	line-height: 1;
+}
+.clearBtn:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+.clearFill {
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 0;
+	background: rgba(255, 77, 77, 0.35);
+	pointer-events: none;
+}
+.clearLabel {
+	position: relative;
+	pointer-events: none;
+}
+
+/* --- Card sets hub --- */
+md-dialog#setsDialog {
+	width: min(96vw, 560px);
+}
+.setsList {
+	display: grid;
+	gap: 8px;
+}
+.setItem {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 12px;
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	background: rgba(0, 0, 0, 0.2);
+	flex-wrap: wrap;
+}
+.setInfo {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+.setName {
+	font-size: 15px;
+	font-weight: 500;
+}
+.setMeta {
+	font-size: 12px;
+}
+.setActions {
+	display: flex;
+	gap: 6px;
+	flex-wrap: wrap;
+}
+.setAction {
+	position: relative;
+	overflow: hidden;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.05);
+	color: var(--text);
+	font-family: inherit;
+	font-size: 13px;
+	padding: 6px 12px;
+	cursor: pointer;
+	line-height: 1;
+}
+.setAction:hover {
+	border-color: var(--accent);
+}
+.setAction.primary {
+	background: rgba(122, 162, 255, 0.18);
+	border-color: rgba(122, 162, 255, 0.4);
+}
+.setAction.delete {
+	border-color: rgba(255, 77, 77, 0.4);
+	background: rgba(255, 77, 77, 0.08);
+}
+.setAction.delete .holdFill {
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 0;
+	background: rgba(255, 77, 77, 0.35);
+	pointer-events: none;
+}
+.setAction .holdLabel {
+	position: relative;
+	pointer-events: none;
+}
+.setAction.delete:hover {
+	border-color: var(--bad);
+}
+
 /* --- Board --- */
 .board {
 	background: rgba(16, 21, 33, 0.55);

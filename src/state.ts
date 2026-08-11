@@ -14,6 +14,10 @@ export const state: GameState = {
 	k: 10,
 	roundIndex: 0,
 
+	currentSetId: null,
+	currentSetName: null,
+	pendingNewSet: false,
+
 	cards: new Map(),
 	groups: [],
 	cardEls: new Map(),

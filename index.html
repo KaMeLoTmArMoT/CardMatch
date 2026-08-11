@@ -17,10 +17,45 @@
     <div class="actions">
       <md-filled-button id="btnOpenImport" type="button">Import CSV</md-filled-button>
       <md-outlined-button id="btnOpenAi" type="button">✨ AI Generate</md-outlined-button>
+      <md-outlined-button id="btnSets" type="button">📚 Sets</md-outlined-button>
+      <button type="button" id="btnClear" class="clearBtn" disabled>
+        <span class="clearFill"></span>
+        <span class="clearLabel">🗑 Clear</span>
+      </button>
     </div>
   </header>
 
   <main class="container">
+    <section id="emptyState" class="emptyState" hidden>
+      <div class="emptyStateTitle md-typescale-title-large">Welcome to CSV Match Cards</div>
+      <p class="emptyStateHint md-typescale-body-medium muted">
+        Add data to start matching cards. Import a CSV or generate cards with AI.
+      </p>
+
+      <div class="emptyStateGrid">
+        <button type="button" id="emptyImportCard" class="emptyCard">
+          <span class="emptyCardIcon" aria-hidden="true">📄</span>
+          <span class="emptyCardTitle">Import CSV</span>
+          <span class="emptyCardHint muted">Drop a CSV here, or click to browse.</span>
+        </button>
+
+        <button type="button" id="emptyAiCard" class="emptyCard">
+          <span class="emptyCardIcon" aria-hidden="true">✨</span>
+          <span class="emptyCardTitle">AI Generate</span>
+          <span class="emptyCardHint muted">Create matching cards from a topic with Mistral.</span>
+        </button>
+      </div>
+
+      <button type="button" id="emptyDropzone" class="emptyDropzone" aria-label="Drop CSV here or click to browse">
+        Drop CSV here to get started
+      </button>
+
+      <div id="emptySetsBlock" class="emptySetsBlock" hidden>
+        <div class="md-typescale-title-small">Your card sets</div>
+        <div id="emptySetsList" class="emptySetsList"></div>
+      </div>
+    </section>
+
     <section class="panel">
       <div class="panelHeader">
         <div class="panelTitle md-typescale-title-medium">Round setup</div>
@@ -44,7 +79,7 @@
         </div>
       </div>
 
-      <div class="colsBlock">
+      <div class="colsBlock" id="colsBlock">
         <div class="md-typescale-title-small">Columns (select 2–6)</div>
         <div id="colsList" class="colsList muted">
           Import a CSV or generate with AI to select columns.
@@ -52,7 +87,7 @@
       </div>
     </section>
 
-    <section class="board">
+    <section class="board" id="boardSection">
       <div class="boardHeader">
         <div class="md-typescale-title-medium">Cards</div>
         <div id="roundInfo" class="md-typescale-body-small muted"></div>
@@ -130,6 +165,10 @@
           <button type="button" class="presetChip" data-theme="Python Data Structures & Operations" data-cols="2" data-custom-cols="Concept, Description">🐍 Python</button>
           <button type="button" class="presetChip" data-theme="Historical Events & Dates" data-cols="3" data-custom-cols="Year, Event, Location">📜 History</button>
           <button type="button" class="presetChip" data-theme="Science Trivia" data-cols="2" data-custom-cols="Term, Definition">🔬 Science</button>
+          <button type="button" class="presetChip" data-theme="German Irregular Verbs (B1+) - Infinitiv, Präteritum, Perfekt" data-cols="3" data-custom-cols="Infinitive, Präteritum, Perfekt (Partizip II)">🇩🇪 German Verbs (B1+)</button>
+          <button type="button" class="presetChip" data-theme="German Prepositions and their Case (Dativ/Akkusativ)" data-cols="3" data-custom-cols="Preposition, English, Case (Dativ/Akkusativ)">🇩🇪 German Prepositions</button>
+          <button type="button" class="presetChip" data-theme="German Adjective Endings across Cases" data-cols="3" data-custom-cols="Nominative, Dative, English">🇩🇪 German Adjectives</button>
+          <button type="button" class="presetChip" data-theme="German Separable Verbs with Prefixes" data-cols="3" data-custom-cols="Verb, Prefix, English">🇩🇪 German Separable Verbs</button>
         </div>
       </div>
 
@@ -183,6 +222,21 @@
       <md-text-button id="btnBackEditor" type="button">Back</md-text-button>
       <md-text-button id="btnRegenerateEditor" type="button" hidden>Regenerate</md-text-button>
       <md-filled-button id="btnStartEditor" type="button" disabled>Start game</md-filled-button>
+    </div>
+  </md-dialog>
+
+  <!-- Card sets hub -->
+  <md-dialog id="setsDialog">
+    <div slot="headline">Card sets</div>
+
+    <div slot="content" class="dialogContent">
+      <div id="setsList" class="setsList"></div>
+      <div id="setsError" class="error"></div>
+    </div>
+
+    <div slot="actions">
+      <md-text-button id="btnCloseSets" type="button">Close</md-text-button>
+      <md-filled-button id="btnNewSet" type="button">+ New set</md-filled-button>
     </div>
   </md-dialog>
 </body>

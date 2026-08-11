@@ -1,6 +1,7 @@
 import { enableSetupButtons } from "./csv";
 import { els } from "./els";
 import { renderColumnsSelector, startRound } from "./game";
+import { createSet, listSets } from "./persist";
 import { escapeHtml, state } from "./state";
 
 interface EditorOptions {
@@ -97,6 +98,11 @@ export function commitEditor(): void {
 	for (let i = 0; i < Math.min(cleanHeaders.length, 6); i++)
 		state.selectedCols.push(i);
 	state.roundIndex = 0;
+
+	if (state.pendingNewSet) {
+		createSet(`New set ${listSets().length + 1}`);
+		state.pendingNewSet = false;
+	}
 
 	renderColumnsSelector();
 	enableSetupButtons();

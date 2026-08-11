@@ -46,6 +46,10 @@ export interface GameState {
 	k: number;
 	roundIndex: number;
 
+	currentSetId: string | null;
+	currentSetName: string | null;
+	pendingNewSet: boolean;
+
 	cards: Map<string, Card>;
 	groups: Group[];
 	cardEls: Map<string, HTMLElement>;

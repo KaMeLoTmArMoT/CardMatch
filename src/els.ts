@@ -13,6 +13,21 @@ function el<T extends HTMLElement>(selector: string): T {
 
 export const els = {
 	btnOpenImport: el<ButtonElement>("#btnOpenImport"),
+	emptyState: el<HTMLElement>("#emptyState"),
+	emptyImportCard: el<ButtonElement>("#emptyImportCard"),
+	emptyAiCard: el<ButtonElement>("#emptyAiCard"),
+	emptyDropzone: el<ButtonElement>("#emptyDropzone"),
+	emptySetsBlock: el<HTMLElement>("#emptySetsBlock"),
+	emptySetsList: el<HTMLElement>("#emptySetsList"),
+	colsBlock: el<HTMLElement>("#colsBlock"),
+	boardSection: el<HTMLElement>("#boardSection"),
+
+	btnClear: el<ButtonElement>("#btnClear"),
+	btnSets: el<ButtonElement>("#btnSets"),
+	setsDialog: el<DialogElement>("#setsDialog"),
+	setsList: el<HTMLElement>("#setsList"),
+	btnNewSet: el<ButtonElement>("#btnNewSet"),
+	btnCloseSets: el<ButtonElement>("#btnCloseSets"),
 	importDialog: el<DialogElement>("#importDialog"),
 	btnCloseImport: el<ButtonElement>("#btnCloseImport"),
 	btnApplyImport: el<ButtonElement>("#btnApplyImport"),
