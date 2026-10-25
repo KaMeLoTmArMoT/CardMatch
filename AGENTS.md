@@ -24,6 +24,9 @@ No test runner configured — validate changes manually via `npm run dev` and vi
 - Source modules under `src/`: `types.ts`, `state.ts`, `csv.ts`, `editor.ts`, `keyStore.ts`, `crypto.ts`, `mistral.ts`, `game.ts`.
 - Material Web and PapaParse are npm dependencies bundled by Vite (no CDN).
 
+## Security
+- **BYOK is a deliberate design, not a bug.** The app is a single-user static SPA with no backend: the Mistral key stays in browser-controlled storage (`localStorage` plain, or AES-GCM encrypted with a user passphrase; IndexedDB as fallback) and never leaves the user's machine. Do not "fix" this with session-only storage or a backend proxy unless multi-user collaboration or a changed threat model is explicitly requested. XSS render paths are expected to escape all user data (`escapeHtml` before `innerHTML`) — keep it that way.
+
 ## Architecture
 - **CSV import**: PapaParse-based preview + full parse into `state.rawRows/headerRow/dataRows`.
 - **Editable pre-selection**: after AI generation and CSV import, `src/editor.ts` opens an Excel-like table (edit cells, add/delete rows & cols); **Start game** commits into `state` and calls `startRound()`.
