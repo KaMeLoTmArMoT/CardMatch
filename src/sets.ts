@@ -204,6 +204,10 @@ function attachDeleteHold(el: HTMLElement, meta: SetMeta): void {
 			deleteSetById(meta.id);
 			if (fill) fill.style.width = "";
 		},
+		onArm: () => {
+			if (fill) fill.style.width = "100%";
+			if (label) label.textContent = "Press Enter again to confirm";
+		},
 	});
 }
 

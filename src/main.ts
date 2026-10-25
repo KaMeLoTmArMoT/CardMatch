@@ -122,6 +122,10 @@ attachHoldConfirm(els.btnClear, 3000, {
 		if (clearFill) clearFill.style.width = "";
 		if (clearLabel) clearLabel.textContent = "🗑 Clear";
 	},
+	onArm: () => {
+		if (clearFill) clearFill.style.width = "100%";
+		if (clearLabel) clearLabel.textContent = "Press Enter again to confirm";
+	},
 });
 els.btnCloseImport.addEventListener("click", (e) => {
 	e.preventDefault();
