@@ -213,6 +213,56 @@ export function getSetMeta(id: string): SetMeta | undefined {
 	return readSets().find((s) => s.id === id);
 }
 
+export interface ExportedSet {
+	version: 1;
+	name: string;
+	game: PersistedGame;
+}
+
+// Returns a JSON string (or null) — the caller owns download/sharing.
+export function serializeSet(id: string): string | null {
+	const meta = getSetMeta(id);
+	const game = loadSet(id);
+	if (!meta || !game) return null;
+	const out: ExportedSet = { version: 1, name: meta.name, game };
+	return JSON.stringify(out, null, 2);
+}
+
+// Validates the exported shape and stores it under a fresh id, so imports
+// can never collide with or overwrite an existing set.
+export function importSet(json: string): SetMeta | null {
+	try {
+		const parsed = JSON.parse(json) as Partial<ExportedSet>;
+		const game = parsed.game;
+		if (!game || typeof game !== "object") return null;
+		if (!Array.isArray(game.dataRows) || game.dataRows.length === 0)
+			return null;
+		if (!game.dataRows.every((r) => Array.isArray(r))) return null;
+		if (!Array.isArray(game.selectedCols)) return null;
+		if (typeof game.k !== "number" || typeof game.maxCols !== "number")
+			return null;
+		if (!Array.isArray(game.cards) || !Array.isArray(game.groups)) return null;
+
+		const meta: SetMeta = {
+			id: newId(),
+			name:
+				String(parsed.name ?? "")
+					.trim()
+					.slice(0, 60) || "Imported set",
+			updatedAt: Date.now(),
+			rowCount: game.dataRows.length,
+			colCount: game.maxCols,
+		};
+		localStorage.setItem(setKey(meta.id), JSON.stringify(game));
+		const sets = readSets();
+		sets.unshift(meta);
+		writeSets(sets);
+		return meta;
+	} catch {
+		return null;
+	}
+}
+
 // Remembers the last rows-per-round value typed by the user so it survives a
 // reload before any set exists (per-set k is already stored in the snapshot).
 export function loadKPref(): number | null {

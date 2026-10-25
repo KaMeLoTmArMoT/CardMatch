@@ -232,9 +232,11 @@
     <div slot="content" class="dialogContent">
       <div id="setsList" class="setsList"></div>
       <div id="setsError" class="error"></div>
+      <input id="setImportInput" type="file" accept="application/json,.json" hidden>
     </div>
 
     <div slot="actions">
+      <md-text-button id="btnImportSet" type="button">Import set</md-text-button>
       <md-text-button id="btnCloseSets" type="button">Close</md-text-button>
       <md-filled-button id="btnNewSet" type="button">+ New set</md-filled-button>
     </div>

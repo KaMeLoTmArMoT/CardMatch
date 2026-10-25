@@ -34,13 +34,15 @@ import {
 	openAiDialog,
 	unlockSavedKey,
 } from "./mistral";
-import { loadKPref, loadLastGame, saveKPref } from "./persist";
+import { importSet, loadKPref, loadLastGame, saveKPref } from "./persist";
 import {
 	clearCurrentSet,
 	handleEmptySetChipClick,
 	handleSetsListClick,
 	initialSetsCardState,
 	openSetsDialog,
+	renderSetList,
+	renderSetsCard,
 	startNewSet,
 } from "./sets";
 import { state } from "./state";
@@ -90,6 +92,23 @@ els.btnSets.addEventListener("click", (e) => {
 els.btnNewSet.addEventListener("click", (e) => {
 	e.preventDefault();
 	startNewSet();
+});
+els.btnImportSet.addEventListener("click", (e) => {
+	e.preventDefault();
+	els.setImportInput.click();
+});
+els.setImportInput.addEventListener("change", async () => {
+	const file = els.setImportInput.files?.[0];
+	els.setImportInput.value = "";
+	if (!file) return;
+	const meta = importSet(await file.text());
+	if (!meta) {
+		els.setsError.textContent = "Invalid set file.";
+		return;
+	}
+	els.setsError.textContent = "";
+	renderSetList();
+	renderSetsCard();
 });
 els.btnCloseSets.addEventListener("click", (e) => {
 	e.preventDefault();

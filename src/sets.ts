@@ -15,6 +15,7 @@ import {
 	loadSet,
 	renameSet,
 	type SetMeta,
+	serializeSet,
 } from "./persist";
 import { state } from "./state";
 
@@ -158,6 +159,13 @@ export function renderSetList(): void {
 		rename.dataset.setId = meta.id;
 		rename.dataset.action = "rename";
 
+		const exp = document.createElement("button");
+		exp.type = "button";
+		exp.className = "setAction";
+		exp.textContent = "Export";
+		exp.dataset.setId = meta.id;
+		exp.dataset.action = "export";
+
 		const del = document.createElement("button");
 		del.type = "button";
 		del.className = "setAction delete";
@@ -173,6 +181,7 @@ export function renderSetList(): void {
 
 		actions.appendChild(open);
 		actions.appendChild(rename);
+		actions.appendChild(exp);
 		actions.appendChild(del);
 
 		item.appendChild(info);
@@ -220,6 +229,19 @@ export function handleEmptySetChipClick(id: string): void {
 	openSetById(id);
 }
 
+export function exportSetById(id: string): void {
+	const json = serializeSet(id);
+	if (!json) return;
+	const safeName = (getSetMeta(id)?.name || "set").replace(/[^\w-]+/g, "_");
+	const blob = new Blob([json], { type: "application/json" });
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement("a");
+	a.href = url;
+	a.download = `${safeName}.json`;
+	a.click();
+	URL.revokeObjectURL(url);
+}
+
 export function handleSetsListClick(target: HTMLElement): void {
 	const btn = target.closest<HTMLElement>(".setAction");
 	if (!btn) return;
@@ -228,6 +250,7 @@ export function handleSetsListClick(target: HTMLElement): void {
 	const action = btn.dataset.action;
 	if (action === "open") openSetById(id);
 	else if (action === "rename") renameSetById(id);
+	else if (action === "export") exportSetById(id);
 }
 
 export function initialSetsCardState(): void {
