@@ -3,7 +3,7 @@ import { openEditor } from "./editor";
 import { els } from "./els";
 import { escapeHtml, state } from "./state";
 
-function toRows(data: unknown): string[][] {
+export function toRows(data: unknown): string[][] {
 	if (!Array.isArray(data)) return [];
 	return data
 		.filter((r): r is unknown[] => Array.isArray(r))
