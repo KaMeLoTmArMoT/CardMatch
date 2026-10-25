@@ -9,6 +9,7 @@
 | Preview production build    | `npm run preview`  |
 | Type-check only             | `npx tsc --noEmit` |
 | Lint check (Biome)          | `npm run lint`     |
+| Duplicate code check        | `npm run dupcheck` |
 | Format codebase (Biome)     | `npm run format`   |
 
 ## Rules
@@ -19,6 +20,7 @@
 ## Testing & Validation
 - Unit tests: Vitest (`npm run test`). Scope is the pure/business logic only — `persist.ts` (with a `localStorage` stub), `state.ts`, `crypto.ts` (WebCrypto via stubbed `window.crypto`), and `toRows` in `state.ts`. DOM-coupled modules (`game.ts`, `editor.ts`, `main.ts`) are intentionally not unit-tested.
 - No browser/E2E tests — validate UI changes manually via `npm run dev` and visual check in browser.
+- Duplicate code: jscpd (`npm run dupcheck`) over `src/` with `--min-tokens 50 --min-lines 5 --threshold 1`; exits non-zero when duplication exceeds 1% of lines.
 
 ## Structure
 - **Standalone Vite single-page app** — entry point: `index.html` + `src/main.ts`.
