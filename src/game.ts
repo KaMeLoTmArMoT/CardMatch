@@ -34,7 +34,8 @@ export function updateRoundInfo(): void {
 
 export function renderColumnsSelector(): void {
 	if (state.maxCols === 0) {
-		els.colsList.textContent = "Import a CSV to select columns.";
+		els.colsList.textContent =
+			"Import a CSV or generate with AI to select columns.";
 		els.colsList.classList.add("muted");
 		return;
 	}
