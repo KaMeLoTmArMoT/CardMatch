@@ -44,3 +44,12 @@ export function escapeHtml(s: string): string {
 		.replaceAll('"', "&quot;")
 		.replaceAll("'", "&#039;");
 }
+
+// Normalizes arbitrary parsed-CSV cells into string rows, dropping anything
+// that is not an array.
+export function toRows(data: unknown): string[][] {
+	if (!Array.isArray(data)) return [];
+	return data
+		.filter((r): r is unknown[] => Array.isArray(r))
+		.map((r) => r.map((c) => String(c ?? "")));
+}

@@ -17,7 +17,8 @@
 - Mistral model is locked to `mistral-medium-2508`.
 
 ## Testing & Validation
-No test runner configured — validate changes manually via `npm run dev` and visual check in browser.
+- Unit tests: Vitest (`npm run test`). Scope is the pure/business logic only — `persist.ts` (with a `localStorage` stub), `state.ts`, `crypto.ts` (WebCrypto via stubbed `window.crypto`), and `toRows` in `state.ts`. DOM-coupled modules (`game.ts`, `editor.ts`, `main.ts`) are intentionally not unit-tested.
+- No browser/E2E tests — validate UI changes manually via `npm run dev` and visual check in browser.
 
 ## Structure
 - **Standalone Vite single-page app** — entry point: `index.html` + `src/main.ts`.

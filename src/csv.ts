@@ -1,14 +1,7 @@
 import Papa from "papaparse";
 import { openEditor } from "./editor";
 import { els } from "./els";
-import { escapeHtml, state } from "./state";
-
-export function toRows(data: unknown): string[][] {
-	if (!Array.isArray(data)) return [];
-	return data
-		.filter((r): r is unknown[] => Array.isArray(r))
-		.map((r) => r.map((c) => String(c ?? "")));
-}
+import { escapeHtml, state, toRows } from "./state";
 
 export function openImport(): void {
 	els.importError.textContent = "";
