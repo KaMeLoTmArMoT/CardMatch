@@ -34,7 +34,7 @@ import {
 	openAiDialog,
 	unlockSavedKey,
 } from "./mistral";
-import { loadLastGame } from "./persist";
+import { loadKPref, loadLastGame, saveKPref } from "./persist";
 import {
 	clearCurrentSet,
 	handleEmptySetChipClick,
@@ -144,6 +144,7 @@ els.btnApplyImport.addEventListener("click", (e) => {
 
 els.rowsPerRound.addEventListener("input", () => {
 	updateRoundInfo();
+	saveKPref(state.k);
 	if (state.dataRows.length > 0) startRound();
 });
 els.btnStart.addEventListener("click", (e) => {
@@ -240,6 +241,8 @@ if (loaded) {
 	state.pendingNewSet = false;
 	hydrateGame(loaded.game);
 } else {
+	const kPref = loadKPref();
+	if (kPref) els.rowsPerRound.value = String(kPref);
 	updateRoundInfo();
 	refreshEmptyState();
 }

@@ -4,6 +4,7 @@ import type { Card, Group } from "./types";
 const LEGACY_KEY = "card-match-game";
 const SETS_KEY = "card-match-sets";
 const LAST_KEY = "card-match-last-set";
+const K_PREF_KEY = "card-match-k-pref";
 
 export interface PersistedGame {
 	delimiter: string;
@@ -210,4 +211,26 @@ export function deleteSet(id: string): void {
 
 export function getSetMeta(id: string): SetMeta | undefined {
 	return readSets().find((s) => s.id === id);
+}
+
+// Remembers the last rows-per-round value typed by the user so it survives a
+// reload before any set exists (per-set k is already stored in the snapshot).
+export function loadKPref(): number | null {
+	try {
+		const raw = localStorage.getItem(K_PREF_KEY);
+		if (!raw) return null;
+		const n = Number.parseInt(raw, 10);
+		if (Number.isNaN(n)) return null;
+		return Math.max(1, Math.min(200, n));
+	} catch {
+		return null;
+	}
+}
+
+export function saveKPref(k: number): void {
+	try {
+		localStorage.setItem(K_PREF_KEY, String(k));
+	} catch {
+		// best-effort only
+	}
 }
